@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: git_remote_branch
 version: !ruby/object:Gem::Version 
-  version: 0.3.0
+  version: 0.3.1
 platform: ruby
 authors: 
 - Mathieu Martin
@@ -10,7 +10,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2008-11-14 00:00:00 -05:00
+date: 2009-06-11 00:00:00 -07:00
 default_executable: 
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -38,9 +38,9 @@ files:
 - lib
 - lib/constants.rb
 - lib/git_remote_branch.rb
+- lib/monkey_patches.rb
 - lib/param_reader.rb
 - lib/state.rb
-- lib/string_ext.rb
 - lib/version.rb
 - LICENSE
 - Rakefile
@@ -72,6 +72,8 @@ files:
 - vendor/capture_fu.rb
 has_rdoc: true
 homepage: http://github.com/webmat/git_remote_branch
+licenses: []
+
 post_install_message: 
 rdoc_options: 
 - --main
@@ -95,9 +97,9 @@ required_rubygems_version: !ruby/object:Gem::Requirement
 requirements: []
 
 rubyforge_project: grb
-rubygems_version: 1.3.0
+rubygems_version: 1.3.2
 signing_key: 
-specification_version: 2
+specification_version: 3
 summary: git_remote_branch eases the interaction with remote branches
 test_files: 
 - test/functional

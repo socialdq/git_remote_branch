@@ -74,6 +74,18 @@ module GitRemoteBranch
         '"#{GIT} branch -d #{branch_name}"'
       ]
     },
+    
+    :retrack    => {
+      :description => 'delete and then track a remote branch',
+      :aliases  => %w{retrack},
+      :commands => [
+        '"#{GIT} checkout master"',
+        '"#{GIT} branch -D #{branch_name}"',
+        '"#{GIT} fetch #{origin}"',
+        '"#{GIT} branch --track #{branch_name} #{origin}/#{branch_name}"',
+        '"#{GIT} checkout #{branch_name}"'
+      ]
+    },
 
     :track      => {
       :description => 'track an existing remote branch',
@@ -86,7 +98,8 @@ module GitRemoteBranch
           "#{GIT} config branch.#{branch_name}.merge refs/heads/#{branch_name}"
         else
           "#{GIT} branch --track #{branch_name} #{origin}/#{branch_name}"
-        end'
+        end',
+        '"#{GIT} checkout #{branch_name}"'
       ]
     }
   } unless defined?(COMMANDS)
@@ -114,7 +127,7 @@ module GitRemoteBranch
     return <<-HELP
   Usage:
 
-#{[:create, :publish, :rename, :delete, :track].map{|action|
+#{[:create, :publish, :rename, :delete, :track, :retrack].map{|action|
       "  grb #{action} branch_name [origin_server] \n\n"
     }  
   }
