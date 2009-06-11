@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: git_remote_branch
 version: !ruby/object:Gem::Version 
-  version: 0.3.1
+  version: 0.3.2
 platform: ruby
 authors: 
 - Mathieu Martin
