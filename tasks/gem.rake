@@ -9,9 +9,9 @@ spec = Gem::Specification.new do |s|
   s.description           = "git_remote_branch is a learning tool to ease the interaction with " +
                             "remote branches in simple situations."
 
-  s.authors               = ['Mathieu Martin', 'Carl Mercier']
-  s.email                 = "webmat@gmail.com"
-  s.homepage              = "http://github.com/webmat/git_remote_branch"
+  s.authors               = ['Mathieu Martin', 'Carl Mercier', 'Jonathan Novak']
+  s.email                 = "jnovak@gmail.com"
+  s.homepage              = "http://github.com/cypriss/git_remote_branch"
   s.rubyforge_project     = 'grb'
 
   s.has_rdoc              = true

@@ -1,11 +1,12 @@
 --- !ruby/object:Gem::Specification 
 name: git_remote_branch
 version: !ruby/object:Gem::Version 
-  version: 0.3.2
+  version: 0.3.3
 platform: ruby
 authors: 
 - Mathieu Martin
 - Carl Mercier
+- Jonathan Novak
 autorequire: 
 bindir: bin
 cert_chain: []
@@ -24,7 +25,7 @@ dependencies:
         version: "1.1"
     version: 
 description: git_remote_branch is a learning tool to ease the interaction with remote branches in simple situations.
-email: webmat@gmail.com
+email: jnovak@gmail.com
 executables: 
 - grb
 extensions: []
@@ -71,7 +72,7 @@ files:
 - vendor
 - vendor/capture_fu.rb
 has_rdoc: true
-homepage: http://github.com/webmat/git_remote_branch
+homepage: http://github.com/cypriss/git_remote_branch
 licenses: []
 
 post_install_message: 
