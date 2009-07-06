@@ -86,7 +86,8 @@ module GitRemoteBranch
     }
   } unless defined?(COMMANDS)
 
-  def track_commands(branch_name, origin, current_branch)
+  def track_steps(p)
+    branch_name, origin = p[:branch], p[:origin]
     res = ["#{GIT} fetch #{origin}"]
     if local_branches.include?(branch_name) 
       res << "#{GIT} config branch.#{branch_name}.remote #{origin}"
@@ -97,10 +98,11 @@ module GitRemoteBranch
     res
   end
 
-  def unfork_commands(branch_name, origin, current_branch)
-    res = track_commands(current_branch, branch_name, current_branch) # branch_name is a remote branch name
+  def unfork_steps(p)
+    branch_name, origin, current_branch = p[:branch], p[:origin], p[:current_branch]
+    res = track_steps :branch => current_branch, :origin => branch_name # branch_name is the remote branch name/reference
     res << "git push -f #{origin} #{current_branch}:refs/heads/#{current_branch}" 
-    res + track_commands(current_branch, origin, current_branch)
+    res + track_steps(:branch => current_branch, :origin => origin)
   end
   
   def self.get_reverse_map(commands)
@@ -149,27 +151,25 @@ module GitRemoteBranch
   HELP
   end
 
-  def compute_steps(action, branch_name, origin, current_branch)
-    case action
-    when :track
-      track_commands(branch_name, origin, current_branch)
-    when :unfork
-      unfork_commands(branch_name, origin, current_branch)
+  # New approach: define a function per action e.g. track_steps, unfork_steps 
+  # that accepts hash with invocation parameters,
+  # invoke through metaprogramming `send "#{action}_steps"`
+  def compute_steps(p)
+    action, branch_name, origin, current_branch = p[:action], p[:branch], p[:origin], p[:current_branch]
+    if COMMANDS[action][:commands]
+      COMMANDS[action][:commands].map{ |c| eval(c) }.compact # old way
     else
-      COMMANDS[action][:commands].map{ |c| eval(c) }.compact
+      self.send "#{action}_steps", p # new way
     end
   end
 
-  def execute_action(action, branch_name, origin, current_branch)
-    cmds = compute_steps(action, branch_name, origin, current_branch)
-    execute_cmds(cmds)
+  def execute_action(params)
+    execute_cmds compute_steps(params)
   end
 
-  def explain_action(action, branch_name, origin, current_branch)
-    cmds = compute_steps(action, branch_name, origin, current_branch)
-
-    whisper "List of operations to do to #{COMMANDS[action][:description]}:", ''
-    puts_cmd cmds
+  def explain_action(params)
+    whisper "List of operations to do to #{COMMANDS[params[:action]][:description]}:", ''
+    puts_cmd compute_steps(params)
     whisper ''
   end
 
