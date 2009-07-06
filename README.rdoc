@@ -93,6 +93,8 @@ Unforks the branch. Useful for the following use case:
 - so you want to closely follow the upstream and want your 'master' to
   exactly follow the upstream master
 
+Usage:
+
   # On branch to be unforked
   $ grb unfork remote_branch_ref [origin_server]
 
