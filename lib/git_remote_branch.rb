@@ -78,18 +78,30 @@ module GitRemoteBranch
     :track      => {
       :description => 'track an existing remote branch',
       :aliases  => %w{track follow grab fetch},
-      :commands => [
-        # This string programming thing is getting old. Not flexible enough anymore.
-        '"#{GIT} fetch #{origin}"',
-        'if local_branches.include?(branch_name) 
-          "#{GIT} config branch.#{branch_name}.remote #{origin}\n" +
-          "#{GIT} config branch.#{branch_name}.merge refs/heads/#{branch_name}"
-        else
-          "#{GIT} branch --track #{branch_name} #{origin}/#{branch_name}"
-        end'
-      ]
+    },
+
+    :unfork      => {
+      :description => 'unfork a remote (e.g. github) branch',
+      :aliases  => %w{unfork},
     }
   } unless defined?(COMMANDS)
+
+  def track_commands(branch_name, origin, current_branch)
+    res = ["#{GIT} fetch #{origin}"]
+    if local_branches.include?(branch_name) 
+      res << "#{GIT} config branch.#{branch_name}.remote #{origin}"
+      res << "#{GIT} config branch.#{branch_name}.merge refs/heads/#{branch_name}"
+    else
+      res << "#{GIT} branch --track #{branch_name} #{origin}/#{branch_name}"
+    end
+    res
+  end
+
+  def unfork_commands(branch_name, origin, current_branch)
+    res = track_commands(current_branch, branch_name, current_branch) # branch_name is a remote branch name
+    res << "git push -f #{origin} #{current_branch}:refs/heads/#{current_branch}" 
+    res + track_commands(current_branch, origin, current_branch)
+  end
   
   def self.get_reverse_map(commands)
     h={}
@@ -118,29 +130,43 @@ module GitRemoteBranch
       "  grb #{action} branch_name [origin_server] \n\n"
     }  
   }
+  grb unfork remote_branch_ref [origin_server]
   
   Notes:
   - If origin_server is not specified, the name 'origin' is assumed (git's default)
   - The rename functionality renames the current branch
+  - The unfork command operates on current branch - enforces the current
+    branch (e.g. master) to follow the remote repository (again)
   
   The explain meta-command: you can also prepend any command with the keyword 'explain'. Instead of executing the command, git_remote_branch will simply output the list of commands you need to run to accomplish that goal.
   Example: 
     grb explain create
     grb explain create my_branch github
   
-  All commands also have aliases:
+  Commands also have aliases:
   #{ COMMANDS.keys.map{|k| k.to_s}.sort.map {|cmd| 
     "#{cmd}: #{COMMANDS[cmd.to_sym][:aliases].join(', ')}" }.join("\n  ") }
   HELP
   end
 
+  def compute_steps(action, branch_name, origin, current_branch)
+    case action
+    when :track
+      track_commands(branch_name, origin, current_branch)
+    when :unfork
+      unfork_commands(branch_name, origin, current_branch)
+    else
+      COMMANDS[action][:commands].map{ |c| eval(c) }.compact
+    end
+  end
+
   def execute_action(action, branch_name, origin, current_branch)
-    cmds = COMMANDS[action][:commands].map{ |c| eval(c) }.compact
+    cmds = compute_steps(action, branch_name, origin, current_branch)
     execute_cmds(cmds)
   end
 
   def explain_action(action, branch_name, origin, current_branch)
-    cmds = COMMANDS[action][:commands].map{ |c| eval(c) }.compact
+    cmds = compute_steps(action, branch_name, origin, current_branch)
 
     whisper "List of operations to do to #{COMMANDS[action][:description]}:", ''
     puts_cmd cmds
