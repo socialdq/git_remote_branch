@@ -82,6 +82,33 @@ The branch you want to rename must be checked out.
   $ grb rename new_branch_name [origin_server]
 
 
+=== unfork
+
+Unforks the branch. Useful for the following use case:
+- you forked a repository on github, e.g. geekq/gettext is a fork of mutoh/gettext
+- you are making changes, commiting, sending pull requests, merging
+- you upstream accepts your patches but modifies them before commiting
+- you do not want to _maintain_ your version of library, just to
+  use it for experimentation and providing changes upstream
+- so you want to closely follow the upstream and want your 'master' to
+  exactly follow the upstream master
+
+Usage:
+
+  # On branch to be unforked
+  $ grb unfork remote_branch_ref [origin_server]
+
+Example:
+
+  $ git remote
+  upstream
+  origin
+  $ git checkout master
+  $ grb unfork upstream/master origin
+  # resets the local master branch and origin/master to the upstream/master
+  # now you can make branches out of your master again and work on new patches
+
+
 === explain
 
 All commands can be prepended by the word 'explain'.  Instead of executing the

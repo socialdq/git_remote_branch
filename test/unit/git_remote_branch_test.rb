@@ -4,7 +4,7 @@ class GitRemoteBranchTest < Test::Unit::TestCase
   context 'help' do
     should 'contain examples for all basic commands' do
       GitRemoteBranch::COMMANDS.keys.each do |k|
-        assert_match "grb #{k} branch_name", grb.get_usage
+        assert_match Regexp.new("grb #{k} [a-zA-Z_]*branch"), grb.get_usage
       end
     end
     

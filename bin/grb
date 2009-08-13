@@ -37,8 +37,8 @@ if p[:action] == :help
 end
 
 if p[:explain]
-  explain_action(p[:action], p[:branch], p[:origin], p[:current_branch])
+  explain_action p
 else
-  execute_action(p[:action], p[:branch], p[:origin], p[:current_branch])
+  execute_action p
 end
 
